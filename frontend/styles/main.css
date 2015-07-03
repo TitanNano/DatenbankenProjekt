@@ -1,0 +1,10 @@
+.cards  md-card {
+    float: left;
+    margin: 1.5%;
+    max-width: 30.3%;
+}
+
+body {
+    background-color: #dedede;
+}
+
