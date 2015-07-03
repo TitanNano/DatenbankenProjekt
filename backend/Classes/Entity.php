@@ -2,28 +2,28 @@
 
 class Entity {
 
-    private $table = null;
+    protected $table = null;
 
-    private $index = null;
+    protected $index = null;
 
-    private $fields = [];
+    protected $fields = [];
 
     public function constructor(){
     }
 
-    private function _save($key, $fields){
+    protected function _save($key, $fields){
 
     }
 
-    private function _load($key){
+    protected function _load($key){
 
     }
 
-    private function _delete($key, $fields){
+    protected function _delete($key, $fields){
 
     }
 
-    public function assing($fields){
+    protected function assing($fields){
         $this->fields = $fields;
     }
 
