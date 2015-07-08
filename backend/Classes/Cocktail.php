@@ -7,7 +7,7 @@ class CocktailEntity extends Entity {
     private $index = 'id';
         
     public function load($id){
-        $this->load($id);
+        $this->_load($id);
     }
     
     public function save(){
