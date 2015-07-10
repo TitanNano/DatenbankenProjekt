@@ -13,7 +13,7 @@ namespace DbServer {
     class AddressEntity extends Entity
     {
 
-        protected $table = 'cocktails';
+        protected $table = 'address';
 
         protected $index = 'id';
 

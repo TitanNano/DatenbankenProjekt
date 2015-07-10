@@ -13,7 +13,7 @@ namespace DbServer {
     class IngredientEntity extends Entity
     {
 
-        protected $table = 'cocktails';
+        protected $table = 'ingredient';
 
         protected $index = 'id';
 
