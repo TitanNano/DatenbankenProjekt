@@ -17,7 +17,11 @@ namespace DbServer {
 
         protected function save($key, $fields)
         {
+         " IF EXISTS (SELECT * FROM". $this->table ."WHERE". $this->index ."` = `" .$key)
+            "UPDATE Table1 SET(...)WHERE".$this->§index. "` = `". $key
 
+        ELSE
+            "INSERT INTO".$this->table ." VALUES (...)";
         }
 
         protected function load($key)
@@ -26,9 +30,9 @@ namespace DbServer {
 
         }
 
-        protected function delete($key, $fields)
+        protected function delete($key)
         {
-
+            $sql = "DELETE FROM ". $this->table ." WHERE `". $this->index ."` = ".$key;
         }
 
         protected function assing($fields)
