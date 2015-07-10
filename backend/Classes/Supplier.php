@@ -6,66 +6,83 @@
  * Time: 09:34
  */
 
-class SupplierEntity extends Entity {
+namespace DbServer {
 
-    private $table = 'cocktails';
+    require_once 'Entity.php';
 
-    private $index = 'id';
+    class SupplierEntity extends Entity
+    {
 
-    public function load($id){
-        $this->_load($id);
-    }
+        protected $table = 'cocktails';
 
-    public function save(){
-        $fields = [
-            "`name`= " . $this->getName() . "'",
-            "`id` = '" . $this->getId() . "'",
-            "`url`" . $this->getUrl()."'",
-            "`contact` = '" . $this->getContact() . "'",
-            "`contact_num` = '" . $this->getContact_num() . "'",
+        protected $index = 'id';
 
-        ];
+        public function load($index)
+        {
+            $this->_load($index);
+        }
 
-        $this->_save($this->fields['id'], $fields);
-    }
+        public function save()
+        {
+            $fields = [
+                "`name`= " . $this->getName() . "'",
+                "`id` = " . $this->getId(),
+                "`url`" . $this->getUrl()."'",
+                "`contact` = '" . $this->getContact() . "'",
+                "`contact_num` = '" . $this->getContactNum() . "'",
+            ];
 
-    public function getName(){
-        return $this->fields['name'];
-    }
+            $this->_save($this->fields['id'], $fields);
+        }
 
-    public function setName($value){
-        $this->fields['name'] = $value;
-    }
+        public function getName()
+        {
+            return $this->fields['name'];
+        }
 
-    public function getId(){
-        return $this->fields['id'];
-    }
+        public function setName($value)
+        {
+            $this->fields['name'] = $value;
+        }
 
-    public function setId($value){
-        $this->fields['id'] = $value;
-    }
+        public function getId()
+        {
+            return $this->fields['id'];
+        }
 
-    public function getUrl(){
-        return $this->fields['url'];
-    }
+        public function setId($value)
+        {
+            $this->fields['id'] = $value;
+        }
 
-    public function setUrl($value){
-        $this->fields['url'] = $value;
-    }
+        public function getUrl()
+        {
+            return $this->fields['url'];
+        }
 
-    public function getContact(){
-        return $this->fields['contact'];
-    }
+        public function setUrl($value)
+        {
+            $this->fields['url'] = $value;
+        }
 
-    public function setContact($value){
-        $this->fields['contact'] = $value;
-    }
+        public function getContact()
+        {
+            return $this->fields['contact'];
+        }
 
-    public function getContact_num(){
-        return $this->fields['contact_num'];
-    }
+        public function setContact($value)
+        {
+            $this->fields['contact'] = $value;
+        }
 
-    public function setContact_num($value){
-        $this->fields['contact_num'] = $value;
+        public function getContactNum()
+        {
+            return $this->fields['contact_num'];
+        }
+
+        public function setContactNum($value)
+        {
+            $this->fields['contact_num'] = $value;
+        }
     }
 }

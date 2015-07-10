@@ -6,74 +6,94 @@
  * Time: 09:33
  */
 
-class IngredientEntity extends Entity {
+namespace DbServer {
 
-    private $table = 'cocktails';
+    require_once 'Entity.php';
 
-    private $index = 'id';
+    class IngredientEntity extends Entity
+    {
 
-    public function load($id){
-        $this->_load($id);
-    }
+        protected $table = 'cocktails';
 
-    public function save(){
-        $fields = [
-            "`name`= " . $this->getName() . "'",
-            "`id` = '" . $this->getId() . "'",
-            "`calories`" . $this->getCalories()."'",
-            "`alcohol` = '" . $this->getAlcohol() . "'",
-            "`description` = '" . $this->getDescription() . "'",
-            "`stock` = '" . $this->getStock() . "'",
-        ];
+        protected $index = 'id';
 
-        $this->_save($this->fields['id'], $fields);
-    }
+        public function load($index)
+        {
+            $this->_load($index);
+        }
 
-    public function getName(){
-        return $this->fields['name'];
-    }
+        public function save()
+        {
+            $fields = [
+                "`name`= " . $this->getName() . "'",
+                "`id` = " . $this->getId(),
+                "`calories` = " . $this->getCalories(),
+                "`alcohol` = " . $this->getAlcohol(),
+                "`description` = '" . $this->getDescription() . "'",
+                "`stock` = " . $this->getStock(),
+            ];
 
-    public function setName($value){
-        $this->fields['name'] = $value;
-    }
+            $this->_save($this->fields['id'], $fields);
+        }
 
-    public function getId(){
-        return $this->fields['id'];
-    }
+        public function getName()
+        {
+            return $this->fields['name'];
+        }
 
-    public function setId($value){
-        $this->fields['id'] = $value;
-    }
+        public function setName($value)
+        {
+            $this->fields['name'] = $value;
+        }
 
-    public function getCalories(){
-        return $this->fields['calories'];
-    }
+        public function getId()
+        {
+            return $this->fields['id'];
+        }
 
-    public function setCalories($value){
-        $this->fields['calories'] = $value;
-    }
+        public function setId($value)
+        {
+            $this->fields['id'] = $value;
+        }
 
-    public function getAlcohol(){
-        return $this->fields['alcohol'];
-    }
+        public function getCalories()
+        {
+            return $this->fields['calories'];
+        }
 
-    public function setAlcohol($value){
-        $this->fields['alcohol'] = $value;
-    }
+        public function setCalories($value)
+        {
+            $this->fields['calories'] = $value;
+        }
 
-    public function getDescription(){
-        return $this->fields['description'];
-    }
+        public function getAlcohol()
+        {
+            return $this->fields['alcohol'];
+        }
 
-    public function setDescription($value){
-        $this->fields['description'] = $value;
-    }
+        public function setAlcohol($value)
+        {
+            $this->fields['alcohol'] = $value;
+        }
 
-    public function getStock(){
-        return $this->fields['stock'];
-    }
+        public function getDescription()
+        {
+            return $this->fields['description'];
+        }
 
-    public function setStock($value){
-        $this->fields['stock'] = $value;
+        public function setDescription($value)
+        {
+            $this->fields['description'] = $value;
+        }
+
+        public function getStock()
+        {
+            return $this->fields['stock'];
+        }
+
+        public function setStock($value)
+        {
+            $this->fields['stock'] = $value;
+        }
     }
 }
