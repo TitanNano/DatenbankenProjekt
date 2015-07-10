@@ -88,5 +88,21 @@ namespace DbServer {
         {
             $this->fields['ranking'] = $value;
         }
+
+        public function getIngredients()
+        {
+            $sqlQuery = new SqlQuery();
+            $sql = "SELECT ingredient_id FROM has_ingredient WHERE id= ". $this->getId();
+
+            $result = $sqlQuery->execute($sql);
+
+            if ($result['status'] == 'success') {
+                $result = $result['result'];
+            } else {
+                $result = [];
+            }
+
+
+        }
     }
 }

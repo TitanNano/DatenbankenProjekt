@@ -17,11 +17,10 @@ namespace DbServer {
 
         protected function save($key, $fields)
         {
-         " IF EXISTS (SELECT * FROM". $this->table ."WHERE". $this->index ."` = `" .$key)
-            "UPDATE Table1 SET(...)WHERE".$this->§index. "` = `". $key
-
-        ELSE
-            "INSERT INTO".$this->table ." VALUES (...)";
+            $sql = "IF EXISTS (SELECT * FROM ". $this->table ." WHERE `". $this->index ."` = ". $key ." )
+                        UPDATE Table1 SET (". join(',', $fields) .") WHERE `" .$this->§index. "` = ". $key ."
+                    ELSE
+                        INSERT INTO ".$this->table ." VALUES (". implode(',', $fields) .")";
         }
 
         protected function load($key)
