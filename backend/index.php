@@ -17,7 +17,8 @@ $session = [
     'entity'        => $_REQUEST['entity'],
     'query'         => $_REQUEST['query'],
     'exclusions'    => $_REQUEST['exclude'],
-    'filters'       => $_REQUEST['filters']
+    'filters'       => $_REQUEST['filters'],
+    'entityTyp'     => $_REQUEST['entityTyp'],
 ];
 
 
