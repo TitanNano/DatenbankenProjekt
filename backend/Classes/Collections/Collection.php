@@ -2,9 +2,46 @@
 
 class Collection {
     
-    function load()
+    protected $table = null;
+
+    protected $index = 'id';
+
+    protected $items = [];
+
+    private   $filters = [];
+
+    public function load($indexList, $column)
     {
-        $sql = "SELECT * FROM ". $this->table;
+        $sqlQuery = new SqlQuery();
+        $column   = isset($column) ? $column : $this->index;
+
+        if (isset($indexList)) {
+            $indexList = " WHERE " . $column . " IN (" . implode(',', $indexList) . ")" . implode(' AND ', $this->filters);
+        } else {
+            $indexList = '';
+        }
+
+        $sql = "SELECT * FROM ". $this->table . $indexList;
+
+        $result = $sqlQuery->execute($sql);
+
+        if ($result['status']) {
+            foreach ($result['data'] as $item) {
+                $this->processItem($item);
+            }
+        }
+    }
+
+    protected function processItem($item)
+    {
+        $entity = new Entity();
+
+        $entity->assign($item);
     }
     
+
+    public function addFilter($filter)
+    {
+        $this->filters[] = $filter;
+    }
 }
