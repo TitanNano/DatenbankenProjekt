@@ -1,10 +1,98 @@
-.cards  md-card {
-    float: left;
-    margin: 1.5%;
-    max-width: 30.3%;
+.root {
+    height: 100%;
+}
+
+md-sidenav {
+    height: 100%;
+}
+
+.view {
+    margin: 0 auto;
+}
+
+.view .card-container {
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    width: 33.3vw;
+}
+
+.view md-card {
+    margin: 1rem;
+}
+
+.view md-card md-card-content {
+    display: block;
 }
 
 body {
     background-color: #dedede;
 }
 
+md-list md-list-item:not(.active) md-icon {
+    display: none;
+}
+
+md-list-item .md-list-item-inner > md-icon:first-child {
+    color: green;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.form.container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+}
+
+.form.main {
+    z-index: 100;
+    flex-direction: column;
+    width: 900px;
+    height: 90vh;
+    display: flex;
+}
+
+.form.main md-card-content {
+    flex: 1 1 auto;
+    align-self: stretch;
+    display: flex;
+    flex-flow: column;
+    overflow: auto;
+}
+
+.form.main md-list {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+[layout] .item {
+    margin: 5px;
+}
+
+[layout] .item.slider {
+    text-align: center;
+}
+
+[right] {
+    align-self: flex-end;
+}
+
+/* --- Smartphone --- */
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .view .card-container {
+        width:  100%;
+    }
+}
+
+@media only screen and (min-device-width : 481px) and (max-device-width : 960px) {
+    .view .card-container {
+        width:  50%;
+    }
+
+    .form.main {
+        width: 90%;
+    }
+}

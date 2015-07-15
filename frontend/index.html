@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="dbClient">
 <head>
     <meta charset="UTF-8">
-    <title>DB Client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{{strings.appName}}</title>
 
+    <link rel="icon" href="node_modules/material-design-icons/maps/2x_web/ic_local_bar_white_36dp.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="node_modules/angular/angular-csp.css">
     <link rel="stylesheet" type="text/css" href="node_modules/angular-material/angular-material.min.css">
     <link rel="stylesheet" type="text/css" href="styles/main.css">
@@ -16,9 +18,9 @@
     <script type="text/javascript" src="scripts/controllers.js"></script>
 </head>
 
-<body ng-app="dbClient">
+<body>
 
-<div ng-controller="client.root">
+<section class="root" layout="row" flex ng-controller="client.root">
     <div class="navContainer" ng-controller="client.nav">
         <md-sidenav class="md-sidenav-left md-whiteframe-z4" md-component-id="nav">
             <md-toolbar>
@@ -26,61 +28,120 @@
             </md-toolbar>
             <md-content>
                 <md-list>
-                    <md-list-item ng-repeat="item in items" ng-click="navigate(item.id)">
-                        <p> {{ item.title }} </p>
+                    <md-list-item ng-repeat="item in items" ng-class="{active : isView(item.view)}" ng-click="setView(item.view)">
+                        {{ parse(item.title) }}
+                        <md-icon md-svg-icon="node_modules/material-design-icons/navigation/svg/production/ic_check_48px.svg"></md-icon>
                     </md-list-item>
                 </md-list>
             </md-content>
         </md-sidenav>
     </div>
 
-    <md-toolbar class="md-whiteframe-z1">
-        <div class="md-toolbar-tools" ng-controller="client.toolbar">
-            <md-button class="md-icon-button" ng-click="openNav()" aria-label="Settings">
-                <md-icon md-svg-icon="node_modules/material-design-icons/navigation/svg/production/ic_menu_36px.svg"></md-icon>
-            </md-button>
-            <h2>
-                <span>{{strings.appName}}</span>
-            </h2>
-            <span flex></span>
-            <md-button class="md-icon-button" aria-label="More">
-                <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
-            </md-button>
+    <div ng-controller="client.views" flex>
+        <md-toolbar class="header md-whiteframe-z1">
+            <div class="md-toolbar-tools" ng-controller="client.toolbar">
+                <md-button class="md-icon-button" ng-click="openNav()" aria-label="Settings">
+                    <md-icon md-svg-icon="node_modules/material-design-icons/navigation/svg/production/ic_menu_36px.svg"></md-icon>
+                </md-button>
+                <h2>
+                    <span>{{strings.appName}}</span>
+                </h2>
+                <span flex></span>
+                <md-button class="md-icon-button" aria-label="More">
+                    <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <div ng-controller="client.views.owner" class="view cards" ng-show="isView('owner')">
+            <div class="card-container" ng-repeat="card in cards">
+                <md-card>
+                    <md-toolbar>
+                        <h1 class="md-toolbar-tools">{{parse(card.title)}}</h1>
+                    </md-toolbar>
+
+                    <md-list>
+                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form)">
+                            {{parse(item.title)}}
+                        </md-list-item>
+                    </md-list>
+                </md-card>
+            </div>
         </div>
-    </md-toolbar>
 
-    <div class="cards">
-        <md-card>
-            <md-card-content>
-                <h2 class="md-title">Paracosm</h2>
-                <p>
-                    The titles of Washed Out's breakthrough song and the first single from Paracosm share the
-                    two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
-                </p>
-          </md-card-content>
-        </md-card>
+        <div ng-controller="client.views.guest" class="view cards" ng-show="isView('guest')">
+            <div class="card-container" ng-repeat="card in cards">
+                <md-card>
+                    <md-toolbar>
+                        <h1 class="md-toolbar-tools">{{parse(card.title)}}</h1>
+                    </md-toolbar>
 
-        <md-card>
-            <md-card-content>
-                <h2 class="md-title">Paracosm</h2>
-                <p>
-                    The titles of Washed Out's breakthrough song and the first single from Paracosm share the
-                    two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
-                </p>
-          </md-card-content>
-        </md-card>
+                    <md-list>
+                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form)">
+                            {{parse(item.title)}}
+                        </md-list-item>
+                    </md-list>
+                </md-card>
+            </div>
+        </div>
 
-        <md-card>
-            <md-card-content>
-                <h2 class="md-title">Paracosm</h2>
-                <p>
-                    The titles of Washed Out's breakthrough song and the first single from Paracosm share the
-                    two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
-                </p>
-          </md-card-content>
-        </md-card>
+        <div class="form container" ng-controller="client.views.forms.cocktails">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('browse-cocktails')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">{{strings.views.forms.cocktails.title}}</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div>
+                        <md-input-container>
+                            <label>{{strings.views.forms.cocktails.search}}</label>
+                            <input ng-model="search.title">
+                        </md-input-container>
+                    </div>
+
+                    <div layout>
+                        <md-chips class="item" flex ng-model="search.exclude"
+                        delete-button-label="{{strings.views.forms.cocktails.remove_item}}"
+                        delete-hint="{{strings.views.forms.cocktails.remove_hint}}"
+                        secondary-placeholder="{{strings.views.forms.cocktails.exclude_add}}" md-autocomplete-snap md-require-match>
+                            <md-autocomplete
+                             placeholder="{{strings.views.forms.cocktails.exclude}}"
+                             md-selected-item="ingrediences.selectedItem"
+                             md-search-text="ingrediences.searchText"
+                             md-search-text-change=""
+                             md-items="item in ingrediences.getItems(ingrediences.searchText)"
+                             md-selected-item-change=""
+                             md-item-text="item.name">
+                                <span md-highlight-text="ingrediences.searchText">{{item.name}}</span>
+                            </md-autocomplete>
+                            <md-chip-template>
+                                <strong>{{$chip.name}}</strong>
+                            </md-chip-template>
+                        </md-chips>
+
+                        <div class="item slider" flex>
+                            <div class="md-body-1">Alcohol {{search.alc}}%</div>
+                            <md-slider ng-model="search.alc" min="0" max="100" aria-label="rating"></md-slider>
+
+                            <div class="md-body-1">Calories {{search.cal}}</div>
+                            <md-slider ng-model="search.cal" min="0" max="150" aria-label="rating"></md-slider>
+                        </div>
+                    </div>
+
+                    <md-list>
+                        <md-list-item ng-repeat="result in search.fetchResults()" data-id="result.id">
+                            <p>{{result.name}}</p>
+                        </md-list-item>
+                        <md-list-item ng-show="search.fetchResults().length === 0">{{strings.views.forms.cocktails.no_results}}</md-list-item>
+                    </md-list>
+
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
-</div>
+
+</section>
 
 </body>
 </html>

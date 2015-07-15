@@ -1,7 +1,52 @@
 {
-    "appName" : "Database Interface",
+    "appName" : "Cocktail Bar",
     "nav" : {
-        "title" : "Navigation",
-        "owner" : "Owner"
+        "title" : "User Role",
+        "owner" : "Owner",
+        "guest" : "Guest",
+        "barkeeper" : "Barkeeper"
+    },
+    "views" : {
+        "owner" : {
+            "cards" : {
+                "cocktails" : {
+                    "title" : "Cocktails",
+                    "list" : {
+                        "browse" : {
+                            "title" : "Explore Cocktails"
+                        },
+                        "ranking" : {
+                            "title"  : "Cocktail Ranking"
+                        }
+                    }
+                },
+                "stock" : {
+                    "title" : "Stock"
+                }
+            }
+        },
+        "guest" : {
+            "cards" : {
+                "recent" : {
+                    "title" : "Recently Ordered"
+                },
+                "top" : {
+                    "title" : "Top 10"
+                }
+            }
+        },
+        "forms" : {
+            "close" : "close",
+
+            "cocktails" : {
+                "title" : "Search for Cocktails",
+                "remove_item" : "Remove Item",
+                "remove_hint" : "Press delete to remove item",
+                "exclude" : "Ingrediences to exclude",
+                "exclude_add" : "+Item",
+                "search" : "Search for a Cocktail name",
+                "no_results" : "There are no Cocktails matching your filters!"
+            }
+        }
     }
 }
