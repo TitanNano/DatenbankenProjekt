@@ -20,7 +20,9 @@ class Collection {
         if (isset($indexList)) {
             $indexList = " WHERE " . $column . " IN (" . implode(',', $indexList) . ")" . implode(' AND ', $this->filters);
         } else {
-            $indexList = '';
+            $indexList = " WHERE" . array_reduce($this->filters, function($prev, $next){
+                return ($prev == "") ? $next : ($prev . " AND " . $next);
+            }, "");
         }
 
         $sql = "SELECT * FROM ". $this->table . $indexList;
