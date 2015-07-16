@@ -5,11 +5,8 @@ class actionsMap {
     public static function searchCocktail($session)
     {
         $cocktails = new CocktailCollection();
-        $filters   = explode(',', $session['filters']);
         
-        $cocktails->addFilter("acl=" . $filters[0]);
-        $cocktails->addFilter("cal=" . $filters[1]);
-
+        $cocktails->loadByQuery($session['query'], $session['alc'], $session['cal'], $session['exclusions']);
     }
     
     public static function getSupplier ($session)

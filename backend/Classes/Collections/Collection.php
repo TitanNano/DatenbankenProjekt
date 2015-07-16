@@ -6,6 +6,8 @@ class Collection {
 
     protected $index = 'id';
 
+    protected $entityType = 'Entity';
+
     protected $items = [];
 
     private   $filters = [];
@@ -34,7 +36,7 @@ class Collection {
 
     protected function processItem($item)
     {
-        $entity = new Entity();
+        $entity = new $this->entityType();
 
         $entity->assign($item);
     }

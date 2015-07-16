@@ -21,6 +21,6 @@ $session = [
     'entityTyp'     => $_REQUEST['entityTyp'],
 ];
 
-
+ActionsMap::{$session['action']}($session);
 
 
