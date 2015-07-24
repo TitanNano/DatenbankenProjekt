@@ -25,6 +25,10 @@ md-sidenav {
     display: block;
 }
 
+md-chips {
+    align-self: flex-start;
+}
+
 body {
     background-color: #dedede;
 }
@@ -66,6 +70,20 @@ md-list-item .md-list-item-inner > md-icon:first-child {
 .form.main md-list {
     flex: 1 1 auto;
     overflow: auto;
+}
+
+.form.main .table-responsive-vertical {
+    flex: 1 1 auto;
+    align-self: stretch;
+    overflow: auto;
+}
+
+.form.main td, .form.main th {
+    width: 5%;
+}
+
+.form.main td:first-child, .form.main th:first-child {
+    width: auto;
 }
 
 [layout] .item {

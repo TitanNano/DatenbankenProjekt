@@ -2,92 +2,53 @@
 
 namespace DbServer {
     
-    class CocktailCollection extends Collection{
+    class CocktailCollection extends Collection {
         
-        protected $table = 'cocktails';
+        protected $table = 'cocktail';
+
+        protected $entityType = '\DbServer\CocktailEntity';
         
         public function loadByQuery($query, $alc, $cal, $exclusions)
         {
             $sqlQuery  = new SqlQuery();
             $cocktails = null;
 
-            $sql = "SELECT has_ingredient.cocktail_id, ingredients.id as ingredient_id, ingredients.alc, ingredients.cal FROM has_ingredient
+            $sql = "SELECT id, `name` FROM cocktail
 
                         LEFT JOIN (
 
-                            SELECT has_alternative.origin_id, ingredient.id, ingredient.alc, ingredient.cal FROM has_alternative
+                            SELECT has_ingredient.id_cocktail, ROUND((SUM(ingredients.alcohol) / COUNT(ingredients.alcohol)), 2) as alcohol, SUM(ingredients.calories) as calories FROM has_ingredient
 
-                                RIGHT JOIN ingredient
+                                LEFT JOIN (
 
-                                ON has_alternative.target = ingredient.id
+                                    SELECT has_alternative.id_origin, ingredient.id, ingredient.alcohol, ingredient.calories FROM has_alternative
 
-                                WHERE ingredient.id NOT IN (" . $exclusions . ")
+                                        RIGHT JOIN ingredient
 
-                        ) AS ingredients
+                                        ON has_alternative.id_target = ingredient.id
 
-                        ON ingredients.origin_id = has_ingredient.ingredient_id OR ingredients.id = has_ingredient.ingredient_id";
+                                        WHERE ingredient.id NOT IN (". $exclusions .")
+
+                                ) AS ingredients
+
+                                ON ingredients.id_origin = has_ingredient.id_ingredient OR ingredients.id = has_ingredient.id_ingredient
+                                GROUP BY id_cocktail
+                                HAVING COUNT(ingredients.id) = COUNT(id_cocktail)
+
+                        ) as cocktails
+
+                    ON cocktail.id = id_cocktail
+                    WHERE cocktails.alcohol <= ". $alc ." AND cocktails.calories <= ". $cal ." AND cocktail.name LIKE '". $query ."%'";
 
             $result = $sqlQuery->execute($sql);
 
-            if ($result['success']) {
+            if ($result['status']) {
 
-                $cocktails = $this->filterIncomplete($result['data']);
+                $cocktails = array_map(function($item){
+                    return $item['id'];
+                }, $result['data']);
 
-                $cocktails = $this->filterByAlcCal($cocktails, $alc, $cal);
-
-
-                $sql = "SELECT id, name FROM cocktails WHERE id IN (". implode(',', array_keys($cocktails)) .")";
-
-                $result = $sqlQuery->execute($sql);
-
-                if ($result['success']) {
-                    foreach ($result['data'] as $item) {
-                        if (strpos($item['name'], $query) !== false) {
-
-                        }
-                    }
-                }
-            }
-        }
-
-        private function filterIncomplete($list)
-        {
-            $newList = [];
-
-            foreach ($list as $item) {
-                if (!isset($newList[$item['cocktail_id']])) {
-                    $newList[$item['cocktail_id']] = [];
-                }
-
-                $newList[$item['cocktail_id']][] = isset($item['ingredient_id']) ? [
-                    'id'  => $item['ingredient_id'],
-                    'alc' => $item['alc'],
-                    'cal' => $item['cal']
-                ] : false;
-            }
-
-            return $newList;
-        }
-
-        private function filterByAlcCal($list, $alc, $cal)
-        {
-            $newList = [];
-
-            foreach ($list as $key => $list) {
-                if (!in_array(false, $list)) {
-                    $list = array_reduce($list, function($last, $next){
-
-                        $last['alc'] += $next['alc'];
-                        $last['cal'] += $next['cal'];
-
-                        return $last;
-
-                    }, ['name' => '', 'alc' => 0, 'cal' => 0]);
-
-                    if ($list['alc'] <= $alc && $list['cal'] <= $cal) {
-                        $newList[$key] = $list;
-                    }
-                }
+                $this->load($cocktails);
             }
         }
     }

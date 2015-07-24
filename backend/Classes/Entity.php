@@ -46,7 +46,7 @@ namespace DbServer {
 
             $result = $sqlQuery->execute($sql);
 
-            if ($result['status']) {
+            if ($result['status'] === 1) {
                 $this->assign($result['data'][0]);
             }
         }
@@ -62,9 +62,19 @@ namespace DbServer {
             return $result['status'];
         }
 
-        protected function assign($fields)
+        public function assign($fields)
         {
             $this->fields = $fields;
+        }
+
+        public function export()
+        {
+            return json_encode($this->fields);
+        }
+
+        public function getFields()
+        {
+            return $this->fields;
         }
     }
 }

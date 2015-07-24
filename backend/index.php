@@ -1,26 +1,32 @@
 <?php
 
-require_once('Classes/Address.php');
-require_once('Classes/Barkeeper.php');
-require_once('Classes/Cocktail.php');
-require_once('Classes/Entity.php');
-require_once('Classes/Ingredient.php');
-require_once('Classes/SqlQuery.php');
-require_once('Classes/Supplier.php');
+namespace DbServer {
 
-require_once('Classes/Collections/Collection.php');
-require_once('Classes/Collections/CocktailCollection.php');
+    require_once('Classes/ActionsMap.php');
 
-$session = [
-    'currentAction' => $_REQUEST['action'],
-    'entityID'      => $_REQUEST['entityID'],
-    'entity'        => $_REQUEST['entity'],
-    'query'         => $_REQUEST['query'],
-    'exclusions'    => $_REQUEST['exclude'],
-    'filters'       => $_REQUEST['filters'],
-    'entityTyp'     => $_REQUEST['entityTyp'],
-];
+    require_once('Classes/Address.php');
+    require_once('Classes/Barkeeper.php');
+    require_once('Classes/Cocktail.php');
+    require_once('Classes/Entity.php');
+    require_once('Classes/Ingredient.php');
+    require_once('Classes/SqlQuery.php');
+    require_once('Classes/Supplier.php');
 
-ActionsMap::{$session['action']}($session);
+    require_once('Classes/Collections/Collection.php');
+    require_once('Classes/Collections/CocktailCollection.php');
 
+    $session = array(
+        'currentAction' => $_REQUEST['action'],
+        'entityID'      => $_REQUEST['entityID'],
+        'entity'        => $_REQUEST['entity'],
+        'query'         => $_REQUEST['query'],
+        'exclusions'    => $_REQUEST['exclude'],
+        'filters'       => $_REQUEST['filters'],
+        'entityTyp'     => $_REQUEST['entityTyp'],
+    );
 
+//    print json_encode($session);
+
+    print ActionsMap::{$session['currentAction']}($session);
+
+}

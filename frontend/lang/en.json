@@ -20,15 +20,26 @@
                         }
                     }
                 },
-                "stock" : {
-                    "title" : "Stock"
+                "manage" : {
+                    "title" : "Manage",
+                    "list" : {
+                        "stock" : {
+                            "title" : "Ingredients Stock"
+                        },
+                        "barkeepers" : {
+                            "title" : "Manage Barkeepers"
+                        },
+                        "suppliers" : {
+                            "title" : "Manage Suppliers"
+                        }
+                    }
                 }
             }
         },
         "guest" : {
             "cards" : {
-                "recent" : {
-                    "title" : "Recently Ordered"
+                "flop" : {
+                    "title" : "Flop 10"
                 },
                 "top" : {
                     "title" : "Top 10"
@@ -37,6 +48,9 @@
         },
         "forms" : {
             "close" : "close",
+
+            "alc" : "alcohol",
+            "cal" : "calories",
 
             "cocktails" : {
                 "title" : "Search for Cocktails",

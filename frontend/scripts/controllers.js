@@ -71,7 +71,17 @@ angular.module('dbClient')
             from : 'ranking'
         }]
     },{
-        title : '{{strings.views.owner.cards.stock.title}}'
+        title : '{{strings.views.owner.cards.manage.title}}',
+        list : [{
+            title : '{{strings.views.owner.cards.manage.list.stock.title}}',
+            from : 'stock-list'
+        },{
+            title : '{{strings.views.owner.cards.manage.list.barkeepers.title}}',
+            from : 'barkeeper-list'
+        },{
+            title : '{{strings.views.owner.cards.manage.list.suppliers.title}}',
+            from : 'supplier-list'
+        }]
     }];
 
 }])
@@ -88,16 +98,15 @@ angular.module('dbClient')
             from : 'ranking'
         }]
     },{
-        title : '{{strings.views.guest.cards.recent.title}}'
+        title : '{{strings.views.guest.cards.flop.title}}'
     },{
         title : '{{strings.views.guest.cards.top.title}}'
     }];
 
 }])
 
-.controller('client.views.forms.cocktails', ['$scope', function($scope){
-    var resultsCache = [{id:1, name:'Coke'}, {id:2, name:'Wodka coke'}, {id:3, name:'Gin'}, {id:4, name:'Gin Coke'}, {id:5, name:'Sprite'}];
-    var ingrediences = [{name : 'coca cola'}, {name : 'sprite'}, {name : 'wodka'}, {name : 'gin'}, {name : 'wine'}];
+.controller('client.views.forms.cocktails', ['$scope', '$http', function($scope, $http){
+    var ingrediences = [{name : 'coca cola'}, {name : 'sprite'}, {name : 'wodka' }, {name : 'gin'}, {name : 'wine'}];
     var filteredIngrediences = null;
     
     $scope.search = {
@@ -107,7 +116,16 @@ angular.module('dbClient')
         alc : 100,
         cal : 100,
         fetchResults : function(){
-            return resultsCache;
+            var exclude = this.exclude.map(function(item){ return item.id; }).join(',');
+
+            exclude = exclude.length > 0 ? exclude : "''";
+
+            $http.get("../backend/index.php?" + encodeURI("action=searchCocktails&query="+ this.text +"&filters="+ this.alc +","+ this.cal +"&exclude=" + exclude))
+                .success(function(results){
+                    if(results.toString() != $scope.search.results.toString()){
+                        $scope.search.results = results;
+                    }
+                });
         }
     };
 
@@ -127,4 +145,7 @@ angular.module('dbClient')
         }
     };
     
+}])
+.controller('client.views.forms.cocktail_details', ['$scope', function($scope){
+
 }]);

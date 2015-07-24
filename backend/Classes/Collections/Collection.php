@@ -1,51 +1,72 @@
 <?php
 
-class Collection {
+namespace DbServer {
     
-    protected $table = null;
+    require_once('Classes/Cocktail.php');
 
-    protected $index = 'id';
 
-    protected $entityType = 'Entity';
+    class Collection {
 
-    protected $items = [];
+        protected $table = null;
 
-    private   $filters = [];
+        protected $index = 'id';
 
-    public function load($indexList, $column)
-    {
-        $sqlQuery = new SqlQuery();
-        $column   = isset($column) ? $column : $this->index;
+        protected $entityType = '\DbServer\Entity';
 
-        if (isset($indexList)) {
-            $indexList = " WHERE " . $column . " IN (" . implode(',', $indexList) . ")" . implode(' AND ', $this->filters);
-        } else {
-            $indexList = array_reduce($this->filters, function($prev, $next){
-                return ($prev == "") ? ("WHERE ". $next) : ($prev . " AND " . $next);
-            }, "");
-        }
+        protected $items = [];
 
-        $sql = "SELECT * FROM ". $this->table . $indexList;
+        private   $filters = [];
 
-        $result = $sqlQuery->execute($sql);
+        public function load($indexList, $column = false)
+        {
+            $sqlQuery = new SqlQuery();
+            $column   = $column ? $column : $this->index;
 
-        if ($result['status']) {
-            foreach ($result['data'] as $item) {
-                $this->processItem($item);
+            if (isset($indexList)) {
+                $indexList = " WHERE " . $column . " IN (" . implode(',', $indexList) . ")" . implode(' AND ', $this->filters);
+            } else {
+                $indexList = array_reduce($this->filters, function($prev, $next){
+                    return ($prev == "") ? ("WHERE ". $next) : ($prev . " AND " . $next);
+                }, "");
+            }
+
+            $sql = "SELECT * FROM ". $this->table . $indexList;
+
+            $result = $sqlQuery->execute($sql);
+
+            if ($result['status']) {
+                foreach ($result['data'] as $item) {
+                    $this->processItem($item);
+                }
             }
         }
+
+        protected function processItem($item)
+        {
+            $entity = new $this->entityType();
+
+            $entity->assign($item);
+
+            $this->items[] = $entity;
+        }
+
+
+        public function addFilter($filter)
+        {
+            $this->filters[] = $filter;
+        }
+
+        public function getItems()
+        {
+            return $this->items;
+        }
+
+        public function export()
+        {
+            return json_encode(array_map(function($item){
+                return $item->getFields();
+            }, $this->items));
+        }
     }
 
-    protected function processItem($item)
-    {
-        $entity = new $this->entityType();
-
-        $entity->assign($item);
-    }
-    
-
-    public function addFilter($filter)
-    {
-        $this->filters[] = $filter;
-    }
 }
