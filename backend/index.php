@@ -23,6 +23,7 @@ namespace DbServer {
         'exclusions'    => $_REQUEST['exclude'],
         'filters'       => $_REQUEST['filters'],
         'entityTyp'     => $_REQUEST['entityTyp'],
+        'entityRank'    => $_REQUEST['ranking']
     );
 
 //    print json_encode($session);

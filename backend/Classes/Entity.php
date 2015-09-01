@@ -62,6 +62,29 @@ namespace DbServer {
             return $result['status'];
         }
 
+        protected function _increase ($key)
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT ranking *".$this->table."WHERE`". $this->index."`=".$key;
+
+            $result = $sqlQuery->execute($sql);
+
+            if ($result['ranking']++)
+                $this->assign($result['ranking'][0]);
+        }
+
+        protected function _lowFife ($key)
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql ="SELECT MIN(ranking)".$this->table."WHERE`".$this->index."ORDER BY desc 5".$key;
+
+            $result = $sqlQuery->execute($sql);
+
+            return $result['status'];
+        }
+
         public function assign($fields)
         {
             $this->fields = $fields;

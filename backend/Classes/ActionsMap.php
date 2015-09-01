@@ -48,6 +48,13 @@ namespace DbServer {
             $ingredient->addFilte("name" .  $session['query']);
             $ingredient->load();
         }
+
+        public static function topTen ($session)
+        {
+            $cocktails = new CocktailTopten();
+            $cocktails->load("name".$session['ranking']);
+            return $cocktails->export();
+        }
     }
 
 }
