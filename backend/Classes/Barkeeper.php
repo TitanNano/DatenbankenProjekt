@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Marco
- * Date: 10.07.2015
- * Time: 09:30
- */
-
 namespace DbServer {
 
     require_once 'Entity.php';

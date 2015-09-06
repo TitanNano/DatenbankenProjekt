@@ -74,15 +74,73 @@ namespace DbServer {
                 $this->assign($result['ranking'][0]);
         }
 
-        protected function _lowFife ($key)
+        protected function _flopTen ($key)
         {
             $sqlQuery = new SqlQuery();
 
-            $sql ="SELECT MIN(ranking)".$this->table."WHERE`".$this->index."ORDER BY desc 5".$key;
+            $sql =  "SELECT MIN(ranking)". $this->table. "FROM cocktail`".$this->index."`WHERE ORDER BY desc 10".$key."
+
+                        LEFT JOIN  (Select id_ingredient, price FROM has_supplier
+
+                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
+
+                                IF (id_ingredient = id_cocktail){SUM (price*3)}";
 
             $result = $sqlQuery->execute($sql);
 
-            return $result['status'];
+            return $result['price'];
+        }
+
+
+        protected function _topTen ($key)
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT ranking". $this->table. "FROM cocktail`".$this->index."`WHERE ORDER BY desc 10".$key."
+
+                        LEFT JOIN  (Select id_ingredient, price FROM has_supplier
+
+                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
+
+                                IF (id_ingredient = id_cocktail){SUM (price*5)}";
+
+
+            $result = $sqlQuery->execute($sql);
+
+            return $result['price'];
+        }
+
+        protected function _price ($key)
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT id_ingredient, price". $this->table. "FROM has_supplier`".$this->index."`WHERE ORDER BY desc 10".$key."
+
+                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
+
+                                IF (id_ingredient = id_cocktail){SUM (price)}";
+
+
+            $result = $sqlQuery->execute($sql);
+
+            return $result['price'];
+        }
+
+        protected function _supplierCollection($key)
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT id, name". $this->table. "FROM supplier`".$this->index."`WHERE".$key."
+
+                        LEFT JOIN ( SELECT id_ingredient, id_supplier, MIN(price) FROM has_supplier
+
+                            IF (id=id_supplier){min(price)}";
+
+
+            $result = $sqlQuery->execute($sql);
+
+            return $result['supplier'];
+
         }
 
         public function assign($fields)
