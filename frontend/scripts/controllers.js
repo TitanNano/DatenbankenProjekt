@@ -34,7 +34,6 @@ angular.module('dbClient')
 }])
 
 .controller('client.toolbar', ['$scope', function($scope){
-    console.log($scope);
 }])
 
 .controller('client.nav', ['$scope', '$compile', function($scope, $compile){
@@ -105,7 +104,7 @@ angular.module('dbClient')
 
 }])
 
-.controller('client.views.forms.cocktails', ['$scope', '$http', function($scope, $http){
+.controller('client.views.forms.cocktails', ['$scope', '$http', 'Server', function($scope, $http, Server){
     var ingrediences = [{name : 'coca cola'}, {name : 'sprite'}, {name : 'wodka' }, {name : 'gin'}, {name : 'wine'}];
     var filteredIngrediences = null;
     
@@ -145,7 +144,19 @@ angular.module('dbClient')
         }
     };
     
-}])
-.controller('client.views.forms.cocktail_details', ['$scope', function($scope){
+    $scope.selectItem = function(id){
+        Server.loadCocktail(id, function(){
+            $scope.openForm('cocktail-details');
+        });
+    };
 
+}])
+.controller('client.views.forms.cocktail_details', ['$scope', 'Server', function($scope, Server){
+    Server.onCocktail(function(cocktail){
+//        $scope.$apply(function(){
+            $scope.cocktail = cocktail;
+//        });
+    });
+
+    console.log($scope);
 }]);

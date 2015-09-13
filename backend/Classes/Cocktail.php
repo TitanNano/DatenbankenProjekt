@@ -6,13 +6,26 @@ namespace DbServer {
     class CocktailEntity extends Entity
     {
 
-        protected $table = 'cocktails';
+        protected $table = 'cocktail';
 
         protected $index = 'id';
 
         public function load($index)
         {
             $this->_load($index);
+        }
+
+        public function assign($fields)
+        {
+            $fields['id']      = intval($fields['id']);
+            $fields['ranking'] = intval($fields['ranking']);
+
+            parent::assign($fields);
+
+            $this->fields['ingredientList'] = $this->getIngredientList();
+            $this->fields['alcohol'] = $this->getAlcohol();
+            $this->fields['calories'] = $this->getCalories();
+            $this->fields['price'] = $this->getPrice();
         }
 
         public function save()
@@ -89,20 +102,85 @@ namespace DbServer {
             $this->fields['ranking'] = $value;
         }
 
-        public function getIngredients()
+        private function getIngredientList()
+        {
+            $ingredientList = new IngredientCollection();
+
+            $ingredientList->loadByCocktail($this->getId());
+
+            return $ingredientList->getItemsRaw();
+        }
+
+        public function getAlcohol()
+        {
+            $amount = 0;
+            $ingredientList = new IngredientCollection();
+
+            $ingredientList->loadByCocktail($this->getId());
+
+            $ingredientList = $ingredientList->getItems();
+
+            foreach ($ingredientList as $item) {
+                $amount += intval($item->getAlcohol());
+            }
+
+            if (count($ingredientList)) {
+                return round($amount / count($ingredientList), 2);
+            } else {
+                return 0;
+            }
+        }
+
+        public function getCalories()
+        {
+            $ingredientList = new IngredientCollection();
+
+            $ingredientList->loadByCocktail($this->getId());
+
+            $ingredientList = $ingredientList->getItems();
+
+            return array_reduce($ingredientList, function($prev, $next){
+                return $prev+= intval($next->getCalories());
+            }, 0);
+        }
+
+        public function getPrice()
+        {
+            $ingredientList = new IngredientCollection();
+
+            $ingredientList->loadByCocktail($this->getId());
+
+            if ($this->isTopTen()) {
+                $multiplier = 5;
+            } else if ($this->isFlopTen()) {
+                $multiplier = 3;
+            } else {
+                $multiplier = 1;
+            }
+
+            return $ingredientList->getPrice($multiplier);
+        }
+
+        public function isTopTen()
         {
             $sqlQuery = new SqlQuery();
-            $sql = "SELECT ingredient_id FROM has_ingredient WHERE id= ". $this->getId();
+
+            $sql = 'SELECT id FROM (SELECT id, ranking FROM cocktail ORDER BY ranking DESC LIMIT 10) AS j1 WHERE id = ' . $this->getId();
 
             $result = $sqlQuery->execute($sql);
 
-            if ($result['status'] == 'success') {
-                $result = $result['result'];
-            } else {
-                $result = [];
-            }
+            return count($result['data']) > 0;
+        }
 
+        public function isFlopTen()
+        {
+            $sqlQuery = new SqlQuery();
 
+            $sql = 'SELECT id FROM (SELECT id, ranking FROM cocktail ORDER BY ranking ASC LIMIT 10) AS j1 WHERE id = ' . $this->getId();
+
+            $result = $sqlQuery->execute($sql);
+
+            return count($result['data']) > 0;
         }
     }
 }

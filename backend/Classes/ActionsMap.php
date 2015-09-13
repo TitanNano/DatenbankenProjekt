@@ -17,43 +17,60 @@ namespace DbServer {
 
         public static function getSupplier ($session)
         {
-            $supplier = new SupplierCollection ();
-            $supplier->addFilter("name" .  $session['query']);
+            $supplier = new SupplierCollection();
+            $supplier->addFilter("name = " .  $session['query']);
         }
 
         public static function displayEntity ($session)
         {
-            $entity = new $session['entityTyp']();
+            $class = "DbServer\\" . $session['entityType'];
+
+            $entity = new $class();
             $entity->load($session['entityID']);
+
             return $entity->export();
         }
 
-        public static function newEntity ($session)
+        public static function updateEntity ($session)
         {
-            $entity = new $session['entityTyp']();
+            $class = "DbServer\\" . $session['entityType'];
+
+            $entity = new $class();
             $entity->assign(json_decode($session['entity']));
-            $entity->save();
+
+            return $entity->save();
         }
 
         public static function deleteEntity ($session)
         {
-            $entity = new $session['entityTyp']();
+            $class = "DbServer\\" . $session['entityType'];
+
+            $entity = new $class();
             $entity->load($session['entityId']);
-            $entity->delete();
+
+            return $entity->delete();
         }
 
         public static function searchIngredient ($session)
         {
             $ingredient = new IngredientCollection();
-            $ingredient->addFilte("name" .  $session['query']);
+            $ingredient->addFilte("name = '" .  $session['query'] . "'");
             $ingredient->load();
         }
 
-        public static function topTen ($session)
+        public static function getTopTen()
         {
-            $cocktails = new CocktailTopten();
-            $cocktails->load("name".$session['ranking']);
+            $cocktails = new CocktailCollection();
+            $cocktails->loadTopTen();
+
             return $cocktails->export();
+        }
+
+        public static function getFlopTen()
+        {
+            $cocktails = new CocktailCollection();
+
+            $cocktails->loadFlopTen();
         }
     }
 

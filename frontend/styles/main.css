@@ -82,6 +82,11 @@ md-list-item .md-list-item-inner > md-icon:first-child {
     width: 5%;
 }
 
+.cocktail-info div {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
 .form.main td:first-child, .form.main th:first-child {
     width: auto;
 }

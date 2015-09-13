@@ -14,6 +14,7 @@ namespace DbServer {
 
     require_once('Classes/Collections/Collection.php');
     require_once('Classes/Collections/CocktailCollection.php');
+    require_once('Classes/Collections/IngredientCollection.php');
 
     $session = array(
         'currentAction' => $_REQUEST['action'],
@@ -22,7 +23,7 @@ namespace DbServer {
         'query'         => $_REQUEST['query'],
         'exclusions'    => $_REQUEST['exclude'],
         'filters'       => $_REQUEST['filters'],
-        'entityTyp'     => $_REQUEST['entityTyp'],
+        'entityType'     => $_REQUEST['entityType'],
         'entityRank'    => $_REQUEST['ranking']
     );
 

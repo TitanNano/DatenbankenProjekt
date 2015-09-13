@@ -48,8 +48,24 @@ namespace DbServer {
                     return $item['id'];
                 }, $result['data']);
 
+                $this->orderBy('ranking', 'ASC');
+
                 $this->load($cocktails);
             }
+        }
+
+        public function loadTopTen()
+        {
+            $this->orderBy('ranking', 'ASC');
+            $this->limit(10);
+            $this->load();
+        }
+
+        public function loadFlopTen()
+        {
+            $this->orderBy('ranking', 'DESC');
+            $this->limit(10);
+            $this->load();
         }
     }
 }

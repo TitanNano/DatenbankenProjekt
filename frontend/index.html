@@ -16,6 +16,7 @@
     <script type="text/javascript" src="node_modules/angular-animate/angular-animate.min.js"></script>
     <script type="text/javascript" src="node_modules/angular-aria/angular-aria.min.js"></script>
     <script type="text/javascript" src="scripts/config.js"></script>
+    <script type="text/javascript" src="scripts/services.js"></script>
     <script type="text/javascript" src="scripts/controllers.js"></script>
 </head>
 
@@ -123,10 +124,10 @@
 
                         <div class="item slider" flex>
                             <div class="md-body-1">Alcohol {{search.alc}}%</div>
-                            <md-slider ng-model="search.alc" min="0" max="100" aria-label="rating" ng-change="search.fetchResults()"></md-slider>
+                            <md-slider ng-model="search.alc" aria-valuenow="100" min="0" max="100" aria-label="rating" ng-change="search.fetchResults()"></md-slider>
 
                             <div class="md-body-1">Calories {{search.cal}}</div>
-                            <md-slider ng-model="search.cal" min="0" max="2000" aria-label="rating" ng-change="search.fetchResults()"></md-slider>
+                            <md-slider ng-model="search.cal" aria-valuenow="2000" min="0" max="2000" aria-label="rating" ng-change="search.fetchResults()"></md-slider>
                         </div>
                     </div>
 
@@ -140,7 +141,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="result in search.results" ng-click="selectItem('')">
+                                <tr ng-repeat="result in search.results" ng-click="selectItem(result.id)">
                                     <td>{{result.name}}</td>
                                     <td>{{result.alcohol}}%</td>
                                     <td>{{result.calories}}</td>
@@ -159,9 +160,27 @@
         <div class="form container" ng-controller="client.views.forms.cocktail_details">
             <md-card class="form main md-whiteframe-z4" ng-show="isForm('cocktail-details')">
                 <md-toolbar>
-                    <h1 class="md-toolbar-tools">{{cocktail.title}}</h1>
+                    <h1 class="md-toolbar-tools">{{cocktail.name}}</h1>
                 </md-toolbar>
                 <md-card-content>
+                    <div layout>
+                        <div flex class="items">
+                            <table class="table table-hover">
+                                <tr ng-repeat="ingredient in cocktail.ingredientList">
+                                    <td>{{ingredient.name}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div flex class="cocktail-info">
+                            <div>Name: {{cocktail.name}}</div>
+                            <div>Alcohol: {{cocktail.alcohol}}%</div>
+                            <div>Calories: {{cocktail.calories}}</div>
+                            <div>Price: {{cocktail.price}}</div>
+                            <div>Ranking: {{cocktail.ranking}}</div>
+                        </div>
+                    </div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
                 </md-card-content>
             </md-card>
         </div>

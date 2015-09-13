@@ -42,11 +42,11 @@ namespace DbServer {
         {
             $sqlQuery = new SqlQuery();
 
-            $sql = "SELECT * ". $this->table ." WHERE `". $this->index ."` = ". $key;
+            $sql = "SELECT * FROM ". $this->table ." WHERE `". $this->index ."` = ". $key;
 
             $result = $sqlQuery->execute($sql);
 
-            if ($result['status'] === 1) {
+            if ($result['status']) {
                 $this->assign($result['data'][0]);
             }
         }
@@ -60,70 +60,6 @@ namespace DbServer {
             $result = $sqlQuery->execute($sql);
 
             return $result['status'];
-        }
-
-        protected function _increase ($key)
-        {
-            $sqlQuery = new SqlQuery();
-
-            $sql = "SELECT ranking *".$this->table."WHERE`". $this->index."`=".$key;
-
-            $result = $sqlQuery->execute($sql);
-
-            if ($result['ranking']++)
-                $this->assign($result['ranking'][0]);
-        }
-
-        protected function _flopTen ($key)
-        {
-            $sqlQuery = new SqlQuery();
-
-            $sql =  "SELECT MIN(ranking)". $this->table. "FROM cocktail`".$this->index."`WHERE ORDER BY desc 10".$key."
-
-                        LEFT JOIN  (Select id_ingredient, price FROM has_supplier
-
-                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
-
-                                IF (id_ingredient = id_cocktail){SUM (price*3)}";
-
-            $result = $sqlQuery->execute($sql);
-
-            return $result['price'];
-        }
-
-
-        protected function _topTen ($key)
-        {
-            $sqlQuery = new SqlQuery();
-
-            $sql = "SELECT ranking". $this->table. "FROM cocktail`".$this->index."`WHERE ORDER BY desc 10".$key."
-
-                        LEFT JOIN  (Select id_ingredient, price FROM has_supplier
-
-                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
-
-                                IF (id_ingredient = id_cocktail){SUM (price*5)}";
-
-
-            $result = $sqlQuery->execute($sql);
-
-            return $result['price'];
-        }
-
-        protected function _price ($key)
-        {
-            $sqlQuery = new SqlQuery();
-
-            $sql = "SELECT id_ingredient, price". $this->table. "FROM has_supplier`".$this->index."`WHERE ORDER BY desc 10".$key."
-
-                            LEFT JOIN (SELECT id_cocktail FROM has_ingredient WHERE id_ingredient=id_cocktail
-
-                                IF (id_ingredient = id_cocktail){SUM (price)}";
-
-
-            $result = $sqlQuery->execute($sql);
-
-            return $result['price'];
         }
 
         protected function _supplierCollection($key)

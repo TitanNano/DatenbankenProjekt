@@ -17,6 +17,13 @@ namespace DbServer {
 
         protected $index = 'id';
 
+        public function assign($fields)
+        {
+            parent::assign($fields);
+
+            $this->fields['price'] = $this->getPrice();
+        }
+
         public function load($index)
         {
             $this->_load($index);
@@ -94,6 +101,17 @@ namespace DbServer {
         public function setStock($value)
         {
             $this->fields['stock'] = $value;
+        }
+
+        public function getPrice()
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT price FROM cocktailbar.has_supplier WHERE id_ingredient = " . $this->getId() . " ORDER BY price ASC";
+
+            $result = $sqlQuery->execute($sql);
+
+            return intval($result['data'][0]);
         }
     }
 }
