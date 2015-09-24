@@ -25,7 +25,7 @@ namespace DbServer {
 
         private   $limit = -1;
 
-        public function load($indexList, $column = false)
+        public function load($indexList = null, $column = false)
         {
             $sqlQuery = new SqlQuery();
             $column   = $column ? $column : $this->index;
@@ -34,7 +34,7 @@ namespace DbServer {
                 $indexList = " WHERE " . $column . " IN (" . implode(',', $indexList) . ")" . implode(' AND ', $this->filters);
             } else {
                 $indexList = array_reduce($this->filters, function($prev, $next){
-                    return ($prev == "") ? ("WHERE ". $next) : ($prev . " AND " . $next);
+                    return ($prev == "") ? (" WHERE ". $next) : ($prev . " AND " . $next);
                 }, "");
             }
 

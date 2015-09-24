@@ -51,11 +51,31 @@ namespace DbServer {
             return $entity->delete();
         }
 
-        public static function searchIngredient ($session)
+        public static function getIngredientList ($session)
         {
             $ingredient = new IngredientCollection();
-            $ingredient->addFilte("name = '" .  $session['query'] . "'");
+            $ingredient->addFilter("name LIKE '%" .  $session['query'] . "%'");
             $ingredient->load();
+
+            return $ingredient->export();
+        }
+
+        public static function getBarkeeperList ($session)
+        {
+            $barkeeperList = new BarkeeperCollection();
+            $barkeeperList->addFilter("name LIKE '%" .  $session['query'] . "%'");
+            $barkeeperList->load();
+
+            return $barkeeperList->export();
+        }
+
+        public static function getSupplierList ($session)
+        {
+            $supplierList = new SupplierCollection();
+            $supplierList->addFilter("name LIKE '%". $session['query'] . "%'");
+            $supplierList->load();
+
+            return $supplierList->export();
         }
 
         public static function getTopTen()
@@ -69,8 +89,34 @@ namespace DbServer {
         public static function getFlopTen()
         {
             $cocktails = new CocktailCollection();
-
             $cocktails->loadFlopTen();
+
+            return $cocktails->export();
+        }
+
+        public static function createBarkeeperCocktailRelation()
+        {
+
+        }
+
+        public static function removeBarkeeperCocktailRelation()
+        {
+
+        }
+
+        public static function createCocktailIngredientRelation()
+        {
+
+        }
+
+        public static function createIngredientSupplierRelation()
+        {
+
+        }
+
+        public static function removeIngredientSupplierRelation()
+        {
+
         }
     }
 

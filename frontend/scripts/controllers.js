@@ -12,7 +12,8 @@ angular.module('dbClient')
         return $scope.view.form == form;
     };
 
-    $scope.openForm = function(form) {
+    $scope.openForm = function(form, loader) {
+        if (loader) loader();
         $scope.view.form = form;
     };
 
@@ -65,42 +66,62 @@ angular.module('dbClient')
         list : [{
             title : '{{strings.views.owner.cards.cocktails.list.browse.title}}',
             form : 'browse-cocktails'
-        },{
-            title : '{{strings.views.owner.cards.cocktails.list.ranking.title}}',
-            from : 'ranking'
         }]
     },{
         title : '{{strings.views.owner.cards.manage.title}}',
         list : [{
             title : '{{strings.views.owner.cards.manage.list.stock.title}}',
-            from : 'stock-list'
+            form : 'stock-list'
         },{
             title : '{{strings.views.owner.cards.manage.list.barkeepers.title}}',
-            from : 'barkeeper-list'
+            form : 'barkeeper-list'
         },{
             title : '{{strings.views.owner.cards.manage.list.suppliers.title}}',
-            from : 'supplier-list'
+            form : 'supplier-list'
         }]
     }];
 
 }])
 
-.controller('client.views.guest', ['$scope', function($scope){
+.controller('client.views.guest', ['$scope', 'Server', function($scope, Server){
 
     $scope.cards = [{
         title : '{{strings.views.owner.cards.cocktails.title}}',
         list : [{
             title : '{{strings.views.owner.cards.cocktails.list.browse.title}}',
             form : 'browse-cocktails'
-        },{
-            title : '{{strings.views.owner.cards.cocktails.list.ranking.title}}',
-            from : 'ranking'
         }]
     },{
-        title : '{{strings.views.guest.cards.flop.title}}'
+        title : '{{strings.views.guest.cards.top.title}}',
+        list : []
     },{
-        title : '{{strings.views.guest.cards.top.title}}'
+        title : '{{strings.views.guest.cards.flop.title}}',
+        list : []
     }];
+
+    Server.loadTopTen(function(cocktails){
+        $scope.cards[1].list = cocktails.map(function(item){
+            return {
+                title : item.name,
+                form : 'cocktail-details',
+                loader : function(){
+                    Server.loadCocktail(item.id);
+                }
+            };
+        });
+    });
+
+    Server.loadFlopTen(function(cocktails){
+        $scope.cards[2].list = cocktails.map(function(item){
+            return {
+                title : item.name,
+                form : 'cocktail-details',
+                loader : function(){
+                    Server.loadCocktail(item.id);
+                }
+            };
+        });
+    });
 
 }])
 
@@ -151,12 +172,69 @@ angular.module('dbClient')
     };
 
 }])
+
+.controller('client.views.forms.ingredients', function($scope, Server){
+
+    $scope.search = {
+        text : '',
+        results : [],
+        fetchResults : function(){
+            Server.getIngredientList(this.text, function(results){
+                this.results = results;
+            }.bind(this));
+        }
+    };
+
+    $scope.search.fetchResults();
+
+    $scope.selectItem = function(id){
+        Server.loadIngredient(id, function(){
+            $scope.openForm('ingredient-details');
+        });
+    };
+
+})
+
+.controller('client.views.forms.barkeeperList', function($scope, Server){
+
+    $scope.search = {
+        text : '',
+        results : [],
+        fetchResults : function(){
+            Server.getBarkeeperList(this.text, function(results){
+                this.results = results;
+            }.bind(this));
+        }
+    };
+
+    $scope.search.fetchResults();
+
+})
+
+.controller('client.views.forms.supplierList', function($scope, Server){
+
+    $scope.search = {
+        text : '',
+        results : [],
+        fetchResults : function(){
+            Server.getSupplierList(this.text, function(results){
+                this.results = results;
+            }.bind(this));
+        }
+    };
+
+    $scope.search.fetchResults();
+
+})
+
 .controller('client.views.forms.cocktail_details', ['$scope', 'Server', function($scope, Server){
     Server.onCocktail(function(cocktail){
-//        $scope.$apply(function(){
-            $scope.cocktail = cocktail;
-//        });
+        $scope.cocktail = cocktail;
     });
+}])
 
-    console.log($scope);
-}]);
+.controller('client.views.forms.ingredient_details', function($scope, Server){
+    Server.onIngredient(function(ingredient){
+        $scope.ingredient = ingredient;
+    });
+});

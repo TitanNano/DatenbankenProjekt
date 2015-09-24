@@ -21,6 +21,8 @@ class SqlQuery {
     {
         $record = array();
 
+//        print $query;
+
         $result = $this->connection->query($query);
 
         if ($result && property_exists($result, 'num_rows')) {

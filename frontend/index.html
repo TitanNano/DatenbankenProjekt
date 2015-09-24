@@ -63,7 +63,7 @@
                     </md-toolbar>
 
                     <md-list>
-                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form)">
+                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form, item.loader)">
                             {{parse(item.title)}}
                         </md-list-item>
                     </md-list>
@@ -79,13 +79,15 @@
                     </md-toolbar>
 
                     <md-list>
-                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form)">
+                        <md-list-item ng-repeat="item in card.list" ng-click="openForm(item.form, item.loader)">
                             {{parse(item.title)}}
                         </md-list-item>
                     </md-list>
                 </md-card>
             </div>
         </div>
+
+<!------  COCKTAILS ------>
 
         <div class="form container" ng-controller="client.views.forms.cocktails">
             <md-card class="form main md-whiteframe-z4" ng-show="isForm('browse-cocktails')">
@@ -157,6 +159,125 @@
             </md-card>
         </div>
 
+<!------  INGREDIENTS ------>
+
+        <div class="form container" ng-controller="client.views.forms.ingredients">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('stock-list')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">Ingredients</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div>
+                        <md-input-container>
+                            <label>Ingredients</label>
+                            <input ng-model="search.text" ng-change="search.fetchResults()">
+                        </md-input-container>
+                    </div>
+
+                    <div class="table-responsive-vertical">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Alcohol</th>
+                                    <th>Calories</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="result in search.results" ng-click="selectItem(result.id)">
+                                    <td>{{result.name}}</td>
+                                    <td>{{result.alcohol}}%</td>
+                                    <td>{{result.calories}}</td>
+                                    <td>{{result.price}} €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div ng-show="search.results.length === 0">There are no Ingredients matching your search term!</div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- BARKEEPERS ----->
+
+        <div class="form container" ng-controller="client.views.forms.barkeeperList">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('barkeeper-list')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">Barkeeper</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div>
+                        <md-input-container>
+                            <label>Barkeeper Name</label>
+                            <input ng-model="search.text" ng-change="search.fetchResults()">
+                        </md-input-container>
+                    </div>
+
+                    <div class="table-responsive-vertical">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="result in search.results" ng-click="selectItem(result.id)">
+                                    <td>{{result.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div ng-show="search.results.length === 0">There are no Barkeeper matching your search term!</div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- SUPPLIERS ----->
+
+        <div class="form container" ng-controller="client.views.forms.supplierList">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('supplier-list')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">Suppliers</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div>
+                        <md-input-container>
+                            <label>Supplier Name</label>
+                            <input ng-model="search.text" ng-change="search.fetchResults()">
+                        </md-input-container>
+                    </div>
+
+                    <div class="table-responsive-vertical">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="result in search.results" ng-click="selectItem(result.id)">
+                                    <td>{{result.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div ng-show="search.results.length === 0">There are no Supplier matching your search term!</div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- COCKTAIL DETAILS ----->
+
         <div class="form container" ng-controller="client.views.forms.cocktail_details">
             <md-card class="form main md-whiteframe-z4" ng-show="isForm('cocktail-details')">
                 <md-toolbar>
@@ -175,9 +296,51 @@
                             <div>Name: {{cocktail.name}}</div>
                             <div>Alcohol: {{cocktail.alcohol}}%</div>
                             <div>Calories: {{cocktail.calories}}</div>
-                            <div>Price: {{cocktail.price}}</div>
+                            <div>Price: {{cocktail.price}}€</div>
                             <div>Ranking: {{cocktail.ranking}}</div>
                         </div>
+                    </div>
+
+                    <div layout>
+                        <md-button ng-show="isView('guest')" class="md-raised md-primary">Order this Cocktail</md-button>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Cocktail</md-button>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Cocktail</md-button>
+                    </div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- INGREDIENT DETAILS ----->
+
+        <div class="form container" ng-controller="client.views.forms.ingredient_details">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('ingredient-details')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">{{ingredient.name}}</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div layout>
+                        <div flex class="items">
+                            <table class="table table-hover">
+                                <tr ng-repeat="relation in ingredient.relationList">
+                                    <td>{{relation.name}}</td>
+                                    <td>{{relation.price}}</td>
+                                    <td><md-icon md-svg-icon="" src="node_modules/material-design-icons/"></md-icon></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div flex class="cocktail-info">
+                            <div>Name: {{ingredient.name}}</div>
+                            <div>Alcohol: {{ingredient.alcohol}}%</div>
+                            <div>Calories: {{ingredient.calories}}</div>
+                            <div>Price: {{ingredient.price}}€</div>
+                        </div>
+                    </div>
+
+                    <div layout>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Ingredient</md-button>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Ingredient</md-button>
                     </div>
 
                     <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>

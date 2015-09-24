@@ -22,6 +22,7 @@ namespace DbServer {
             parent::assign($fields);
 
             $this->fields['price'] = $this->getPrice();
+            $this->fields['relationList'] = $this->getRelations();
         }
 
         public function load($index)
@@ -107,11 +108,24 @@ namespace DbServer {
         {
             $sqlQuery = new SqlQuery();
 
-            $sql = "SELECT price FROM cocktailbar.has_supplier WHERE id_ingredient = " . $this->getId() . " ORDER BY price ASC";
+            $sql = "SELECT price FROM cocktailbar.has_supplier WHERE id_ingredient = " . $this->getId() . " ORDER BY price ASC LIMIT 1";
 
             $result = $sqlQuery->execute($sql);
 
-            return intval($result['data'][0]);
+            return intval($result['data'][0]['price']);
+        }
+
+        public function getRelations()
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT name, price FROM has_supplier
+                        RIGHT JOIN supplier ON has_supplier.id_supplier = supplier.id
+                        WHERE has_supplier.id_ingredient = ". $this->getId();
+
+            $result = $sqlQuery->execute($sql);
+
+            return $result['data'];
         }
     }
 }
