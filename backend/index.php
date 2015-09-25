@@ -16,6 +16,7 @@ namespace DbServer {
     require_once('Classes/Collections/CocktailCollection.php');
     require_once('Classes/Collections/IngredientCollection.php');
     require_once('Classes/Collections/BarkeeperCollection.php');
+    require_once('Classes/Collections/SupplierCollection.php');
 
     $session = array(
         'currentAction' => $_REQUEST['action'],

@@ -39,7 +39,7 @@ namespace DbServer {
                 "`ranking` = " . $this->getRanking(),
             ];
 
-            $this->_save($this->fields['id'], $fields);
+            return $this->_save($this->fields['id'], $fields);
         }
 
         public function getId()
@@ -94,7 +94,7 @@ namespace DbServer {
 
         public function getRanking()
         {
-            return $this->fields['preparation'];
+            return $this->fields['ranking'];
         }
 
         public function setRanking($value)

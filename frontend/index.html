@@ -287,13 +287,18 @@
                     <div layout>
                         <div flex class="items">
                             <table class="table table-hover">
-                                <tr ng-repeat="ingredient in cocktail.ingredientList">
-                                    <td>{{ingredient.name}}</td>
+                                <tr ng-repeat="ingredient in cocktail.ingredientList" ng-if="!ingredient.removed">
+                                    <td ng-click="selectIngredient(ingredient.id)">{{ingredient.name}}</td>
+                                    <td ng-if="editmode" ng-click="ingredient.removed = true"><md-icon md-svg-icon="./node_modules/material-design-icons/content/svg/production/ic_remove_48px.svg"></md-icon></td>
                                 </tr>
                             </table>
                         </div>
                         <div flex class="cocktail-info">
-                            <div>Name: {{cocktail.name}}</div>
+                            <div ng-if="!editmode">Name: {{cocktail.name}}</div>
+                            <md-input-container ng-if="editmode">
+                                <label>Name</label>
+                                <input ng-model="cocktail.name">
+                            </md-input-container>
                             <div>Alcohol: {{cocktail.alcohol}}%</div>
                             <div>Calories: {{cocktail.calories}}</div>
                             <div>Price: {{cocktail.price}}€</div>
@@ -303,8 +308,10 @@
 
                     <div layout>
                         <md-button ng-show="isView('guest')" class="md-raised md-primary">Order this Cocktail</md-button>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Cocktail</md-button>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Cocktail</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" ng-click="setEditMode(true)" class="md-raised md-primary">Edit this Cocktail</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); selectCocktail(cocktail.id)" class="md-raised md-primary">Discard Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); save()" class="md-raised md-primary">Save Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" class="md-raised md-primary">Remove this Cocktail</md-button>
                     </div>
 
                     <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
@@ -323,24 +330,103 @@
                     <div layout>
                         <div flex class="items">
                             <table class="table table-hover">
-                                <tr ng-repeat="relation in ingredient.relationList">
-                                    <td>{{relation.name}}</td>
-                                    <td>{{relation.price}}</td>
-                                    <td><md-icon md-svg-icon="" src="node_modules/material-design-icons/"></md-icon></td>
+                                <tr ng-repeat="relation in ingredient.relationList" ng-if="!relation.removed">
+                                    <td ng-click="selectSupplier(relation.id)">{{relation.name}}</td>
+                                    <td ng-click="selectSupplier(relation.id)">{{relation.price}}€</td>
+                                    <td ng-if="editmode" ng-click="relation.removed = true"><md-icon md-svg-icon="./node_modules/material-design-icons/content/svg/production/ic_remove_48px.svg"></md-icon></td>
                                 </tr>
                             </table>
                         </div>
                         <div flex class="cocktail-info">
-                            <div>Name: {{ingredient.name}}</div>
-                            <div>Alcohol: {{ingredient.alcohol}}%</div>
-                            <div>Calories: {{ingredient.calories}}</div>
+                            <div ng-if="!editmode">Name: {{ingredient.name}}</div>
+                            <md-input-container ng-if="editmode">
+                                <label>Name</label>
+                                <input ng-model="ingredient.name">
+                            </md-input-container>
+
+                            <div ng-if="!editmode">Alcohol: {{ingredient.alcohol}}%</div>
+                            <md-input-container ng-if="editmode">
+                                <label>Alcohol</label>
+                                <input ng-model="ingredient.alcohol">
+                            </md-input-container>
+
+                            <div ng-if="!editmode">Calories: {{ingredient.calories}}</div>
+                            <md-input-container ng-if="editmode">
+                                <label>Calories</label>
+                                <input ng-model="ingredient.calories">
+                            </md-input-container>
+
                             <div>Price: {{ingredient.price}}€</div>
                         </div>
                     </div>
 
                     <div layout>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Ingredient</md-button>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Ingredient</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" ng-click="setEditMode(true)" class="md-raised md-primary">Edit this Ingredient</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); selectIngredient(ingredient.id)" class="md-raised md-primary">Discard Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); save()" class="md-raised md-primary">Save Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" class="md-raised md-primary">Remove this Ingredient</md-button>
+                    </div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- BARKEEPER DETAILS ----->
+
+        <div class="form container" ng-controller="client.views.forms.barkeeper_details">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('barkeeper-details')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">{{barkeeper.name}}</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div layout>
+                        <div flex class="items">
+                            <table class="table table-hover">
+                                <tr ng-repeat="relation in barkeeper.relationList">
+                                    <td ng-click="selectCocktail(relation.id)">{{relation.name}}</td>
+                                    <td ng-click="selectCocktail(relation.id)">{{relation.price}}€</td>
+                                    <td ng-if="editmode"><md-icon md-svg-icon="./node_modules/material-design-icons/content/svg/production/ic_remove_48px.svg"></md-icon></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div layout>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Barkeeper</md-button>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Barkeeper</md-button>
+                    </div>
+
+                    <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+
+<!----- SUPPLIER DETAILS ----->
+
+        <div class="form container" ng-controller="client.views.forms.supplier_details">
+            <md-card class="form main md-whiteframe-z4" ng-show="isForm('supplier-details')">
+                <md-toolbar>
+                    <h1 class="md-toolbar-tools">{{supplier.name}}</h1>
+                </md-toolbar>
+                <md-card-content>
+                    <div layout>
+                        <div flex class="cocktail-info">
+                            <div>Name: {{supplier.name}}</div>
+                            <div>URL: {{supplier.url}}</div>
+                            <div>Contact: {{supplier.contact}}</div>
+                            <div>Contact Number: {{supplier.contact_num}}</div>
+                        </div>
+                        <div flex class="cocktail-info">
+                            <div ng-if="supplier.address.address_line">Address Line: {{supplier.address.address_line}}</div>
+                            <div>Street: {{supplier.address.street}} {{supplier.address.house_num}}</div>
+                            <div>City: {{supplier.address.plz}} {{supplier.address.city}}</div>
+                        </div>
+                    </div>
+
+                    <div layout>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Supplier</md-button>
+                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Supplier</md-button>
                     </div>
 
                     <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>

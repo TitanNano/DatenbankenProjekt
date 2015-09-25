@@ -119,7 +119,7 @@ namespace DbServer {
         {
             $sqlQuery = new SqlQuery();
 
-            $sql = "SELECT name, price FROM has_supplier
+            $sql = "SELECT id, name, price FROM has_supplier
                         RIGHT JOIN supplier ON has_supplier.id_supplier = supplier.id
                         WHERE has_supplier.id_ingredient = ". $this->getId();
 

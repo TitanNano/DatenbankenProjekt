@@ -15,6 +15,13 @@ namespace DbServer {
             $this->_load($index);
         }
 
+        public function assign($fields)
+        {
+            parent::assign($fields);
+
+            $this->fields['relationList'] = $this->getRelations();
+        }
+
         public function save()
         {
             $fields = [
@@ -43,6 +50,26 @@ namespace DbServer {
         public function setName($value)
         {
             $this->fields['name'] = $value;
+        }
+
+        public function getRelations()
+        {
+            $sqlQuery = new SqlQuery();
+
+            $sql = "SELECT id FROM can_do
+                        RIGHT JOIN cocktail ON can_do.id_cocktail = cocktail.id
+                        WHERE can_do.id_barkeeper = ". $this->getId();
+
+            $result = $sqlQuery->execute($sql);
+
+            $result = array_map(function($item){
+                return intval($item['id']);
+            }, $result['data']);
+
+            $cocktails = new CocktailCollection();
+            $cocktails->load($result);
+
+            return $cocktails->getItemsRaw();
         }
     }
 

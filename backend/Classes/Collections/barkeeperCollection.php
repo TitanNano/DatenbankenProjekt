@@ -8,5 +8,3 @@ namespace DbServer {
         protected $entityType = '\DbServer\BarkeeperEntity';
     }
 }
-
-?>

@@ -36,7 +36,7 @@ namespace DbServer {
             $class = "DbServer\\" . $session['entityType'];
 
             $entity = new $class();
-            $entity->assign(json_decode($session['entity']));
+            $entity->assign((array) json_decode($session['entity']));
 
             return $entity->save();
         }

@@ -25,7 +25,7 @@ class SqlQuery {
 
         $result = $this->connection->query($query);
 
-        if ($result && property_exists($result, 'num_rows')) {
+        if (isset($result) && property_exists($result, 'num_rows')) {
             for ($row_no = $result->num_rows - 1; $row_no >= 0; $row_no--) {
 
                 $result->data_seek($row_no);

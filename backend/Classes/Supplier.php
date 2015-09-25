@@ -22,6 +22,13 @@ namespace DbServer {
             $this->_load($index);
         }
 
+        public function assign($fields)
+        {
+            parent::assign($fields);
+
+            $this->fields['address'] = $this->getAddress();
+        }
+
         public function save()
         {
             $fields = [
@@ -30,6 +37,7 @@ namespace DbServer {
                 "`url`" . $this->getUrl()."'",
                 "`contact` = '" . $this->getContact() . "'",
                 "`contact_num` = '" . $this->getContactNum() . "'",
+                "`address_id` = " . $this->fields['address_id']
             ];
 
             $this->_save($this->fields['id'], $fields);
@@ -83,6 +91,14 @@ namespace DbServer {
         public function setContactNum($value)
         {
             $this->fields['contact_num'] = $value;
+        }
+
+        public function getAddress()
+        {
+            $address = new AddressEntity();
+            $address->load($this->fields['address_id']);
+
+            return $address->getFields();
         }
     }
 }

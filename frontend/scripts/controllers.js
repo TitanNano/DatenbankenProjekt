@@ -1,11 +1,10 @@
 
 angular.module('dbClient')
 
-.controller('client.root', ['$scope', '$rootScope', '$mdUtil', '$mdSidenav', '$log', '$http', '$interpolate',
-                            function($scope, $rootScope, $mdUtil, $mdSidenav, $log, $http, $interpolate){
+.controller('client.root', function($scope, $rootScope, $mdUtil, $mdSidenav, Server, $http, $interpolate){
     $scope.view = {
         current : 'guest',
-        form : 'browse-cocktails'
+        form : ''
     };
 
     $scope.isForm = function(form) {
@@ -32,7 +31,35 @@ angular.module('dbClient')
     $scope.parse = function(expression) {
         return $interpolate(expression)($scope);
     };
-}])
+
+    $scope.selectCocktail = function(id){
+        Server.loadCocktail(id, function(){
+            $scope.openForm('cocktail-details');
+        });
+    };
+
+    $scope.selectIngredient = function(id){
+        Server.loadIngredient(id, function(){
+            $scope.openForm('ingredient-details');
+        });
+    };
+
+    $scope.selectBarkeeper = function(id){
+        Server.loadBarkeeper(id, function(){
+            $scope.openForm('barkeeper-details');
+        });
+    };
+
+    $scope.selectSupplier =  function(id){
+        Server.loadSupplier(id, function(){
+            $scope.openForm('supplier-details');
+        });
+    };
+
+    $scope.setEditMode= function(enabled){
+        this.editmode = enabled;
+    };
+})
 
 .controller('client.toolbar', ['$scope', function($scope){
 }])
@@ -165,11 +192,7 @@ angular.module('dbClient')
         }
     };
     
-    $scope.selectItem = function(id){
-        Server.loadCocktail(id, function(){
-            $scope.openForm('cocktail-details');
-        });
-    };
+    $scope.selectItem = $scope.selectCocktail;
 
 }])
 
@@ -187,11 +210,7 @@ angular.module('dbClient')
 
     $scope.search.fetchResults();
 
-    $scope.selectItem = function(id){
-        Server.loadIngredient(id, function(){
-            $scope.openForm('ingredient-details');
-        });
-    };
+    $scope.selectItem = $scope.selectIngredient;
 
 })
 
@@ -209,6 +228,8 @@ angular.module('dbClient')
 
     $scope.search.fetchResults();
 
+    $scope.selectItem = $scope.selectBarkeeper;
+
 })
 
 .controller('client.views.forms.supplierList', function($scope, Server){
@@ -225,16 +246,42 @@ angular.module('dbClient')
 
     $scope.search.fetchResults();
 
+    $scope.selectItem = $scope.selectSupplier;
+
 })
 
 .controller('client.views.forms.cocktail_details', ['$scope', 'Server', function($scope, Server){
+    $scope.editmode = false;
+
     Server.onCocktail(function(cocktail){
         $scope.cocktail = cocktail;
     });
+
+    $scope.removeRelation = function(relation){
+        relation.removed = true;
+    };
+
+    $scope.save = function(){
+        Server.saveEntity('Cocktail', $scope.cocktail, function(){
+            $scope.selectCocktail($scope.cocktail.id);
+        });
+    };
 }])
 
 .controller('client.views.forms.ingredient_details', function($scope, Server){
     Server.onIngredient(function(ingredient){
         $scope.ingredient = ingredient;
+    });
+})
+
+.controller('client.views.forms.barkeeper_details', function($scope, Server){
+    Server.onBarkeeper(function(barkeeper){
+        $scope.barkeeper = barkeeper;
+    });
+})
+
+.controller('client.views.forms.supplier_details', function($scope, Server){
+    Server.onSupplier(function(supplier){
+        $scope.supplier = supplier;
     });
 });

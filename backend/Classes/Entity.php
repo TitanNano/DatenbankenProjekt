@@ -28,10 +28,17 @@ namespace DbServer {
                 $fieldValues[] = trim($field[1]);
             }
 
-            $sql = "IF EXISTS (SELECT * FROM ". $this->table ." WHERE `". $this->index ."` = ". $key ." )
-                        UPDATE Table1 SET (". join(',', $fields) .") WHERE `" .$this->§index. "` = ". $key ."
-                    ELSE
-                        INSERT INTO ".$this->table ." (". implode(',', $FieldNames) .") VALUES (". implode(',', $fieldValues) .")";
+            $sql = "SELECT id FROM ". $this->table ." WHERE `". $this->index ."` = ". $key;
+
+            $result = $sqlQuery->execute($sql);
+
+            if(count($result['data']) > 0) {
+                $sql = "UPDATE ". $this->table ." SET ". join(',', $fields) ." WHERE `" .$this->index. "` = ". $key;
+            } else {
+                $sql = "INSERT INTO ".$this->table ." (". implode(',', $FieldNames) .") VALUES (". implode(',', $fieldValues) .")";
+            }
+
+            print $sql;
 
             $result = $sqlQuery->execute($sql);
 
