@@ -1,5 +1,5 @@
 angular.module('dbClient')
-.factory('Server', function($http){
+.factory('Server', function($http, Util){
 
     var url = '../backend/index.php?';
     var currentCocktail = null;
@@ -23,7 +23,7 @@ angular.module('dbClient')
                 });
 
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(currentCocktail);
                 }
             });
         },
@@ -38,7 +38,7 @@ angular.module('dbClient')
                 });
 
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(currentIngredient);
                 }
             });
         },
@@ -53,7 +53,7 @@ angular.module('dbClient')
                 });
 
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(currentBarkeeper);
                 }
             });
         },
@@ -68,7 +68,7 @@ angular.module('dbClient')
                 });
 
                 if (typeof callback == 'function') {
-                    callback();
+                    callback(currentSupplier);
                 }
             });
         },
@@ -110,12 +110,65 @@ angular.module('dbClient')
         },
 
         saveEntity : function(type, object, callback){
-            $http.get(url + encodeURI('action=updateEntity&entityType='+ type +'Entity&entity='+ JSON.stringify(object)))
-                .success(callback);
+            var relationList = Util.extractRelations(object, (type == 'Cocktail' ? 'ingredientList' : null));
+            var relationAction = ({
+                Cocktail : 'CocktailIngredient',
+                Barkeeper : 'BarkeeperCocktail',
+                ingredient : 'IngredientSupplier'
+            })[type];
+
+            $http({
+                method : 'POST',
+                url : url,
+                data : encodeURI('action=updateEntity&entityType='+ type +'Entity&entity='+ JSON.stringify(object)),
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            }).success(function(){
+                if (relationAction) {
+                    $http({
+                        method : 'POST',
+                        url : url,
+                        data : encodeURI('action=create'+ relationAction +'Relation&entityID='+ relationList.id +'&entity='+ JSON.stringify(relationList.keep)),
+                        headers : {
+                            'Content-Type' : 'application/x-www-form-urlencoded'
+                        }
+                    }).success(function(){
+                        $http({
+                            method : 'POST',
+                            url : url,
+                            data : encodeURI('action=remove'+ relationAction +'Relation&entityID='+ relationList.id +'&entity='+ JSON.stringify(relationList.remove)),
+                            headers : {
+                                'Content-Type' : 'application/x-www-form-urlencoded'
+                            }
+                        }).success(callback);
+                    });
+                }
+            });
         }
 
     };
 
     return Server;
 
+})
+
+.factory('Util', function(){
+    return {
+        extractRelations : function(object, key) {
+            var result = { id : object.id, keep : [], remove : [] };
+
+            var list = object[key] || object.relationList;
+
+            list.forEach(function(item){
+                if (!item.removed) {
+                    result.keep.push(item.id);
+                } else {
+                    result.remove.push(item.id);
+                }
+            });
+
+            return result;
+        }
+    };
 });

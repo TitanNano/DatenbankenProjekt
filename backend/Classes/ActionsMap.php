@@ -94,29 +94,156 @@ namespace DbServer {
             return $cocktails->export();
         }
 
-        public static function createBarkeeperCocktailRelation()
+        public static function createBarkeeperCocktailRelation($session)
         {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
 
+            foreach ($list as $item) {
+                $sql = "SELECT id_cocktail FROM can_do WHERE id_cocktail = ". $item ." AND id_barkeeper = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if (!$doesExist) {
+                    $sql = "INSERT INTO can_do (id_barkeeper, id_cocktail) VALUES (". $session['entityID'] .", ". $item .")";
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                }
+            }
+
+            return $positive == count($list);
         }
 
-        public static function removeBarkeeperCocktailRelation()
+        public static function removeBarkeeperCocktailRelation($session)
         {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
 
+            foreach ($list as $item) {
+                $sql = "SELECT id_cocktail FROM can_do WHERE id_cocktail = ". $item ." AND id_barkeeper = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if ($doesExist) {
+                    $sql = "DELETE FROM can_do WHERE id_barkeeper = ". $session['entityID'] ." AND id_cocktail = ". $item;
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                }
+            }
+
+            return $positive == count($list);
         }
 
-        public static function createCocktailIngredientRelation()
+        public static function createCocktailIngredientRelation($session)
         {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
 
+            foreach ($list as $item) {
+                $sql = "SELECT id_ingredient FROM has_ingredient WHERE id_ingredient = ". $item ." AND id_cocktail = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if (!$doesExist) {
+                    $sql = "INSERT INTO has_ingredient (id_cocktail, id_ingredient) VALUES (". $session['entityID'] .", ". $item .")";
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                }
+            }
+
+            return $positive == count($list);
         }
 
-        public static function createIngredientSupplierRelation()
+        public static function removeCocktailIngredientRelation($session)
         {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
 
+            foreach ($list as $item) {
+                $sql = "SELECT id_ingredient FROM has_ingredient WHERE id_ingredient = ". $item ." AND id_cocktail = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if ($doesExist) {
+                    $sql = "DELETE FROM has_ingredient WHERE id_cocktail = ". $session['entityID'] ." AND id_ingredient = ". $item;
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                }
+            }
+
+            return $positive == count($list);
         }
 
-        public static function removeIngredientSupplierRelation()
+        public static function createIngredientSupplierRelation($session)
         {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
 
+            foreach ($list as $item) {
+                $sql = "SELECT id_supplier FROM has_supplier WHERE id_supplier = ". $item ." AND id_ingredient = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if (!$doesExist) {
+                    $sql = "INSERT INTO has_supplier (id_ingredient, id_supplier) VALUES (". $session['entityID'] .", ". $item .")";
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                } else {
+                    $sql = "UPDATE has_supplier SET price = ". $item->price ." WHERE id_supplier = ". $item->id ." AND id_ingredient = ". $session['entityID'];
+                }
+            }
+
+            return $positive == count($list);
+        }
+
+        public static function removeIngredientSupplierRelation($session)
+        {
+            $sqlQuery = new SqlQuery();
+            $list = json_decode($session['entity']);
+            $positive = 0;
+
+            foreach ($list as $item) {
+                $sql = "SELECT id_supplier FROM has_supplier WHERE id_supplier = ". $item ." AND id_ingredient = ". $session['entityID'] ." LIMIT 1";
+
+                $doesExist = $sqlQuery->execute($sql);
+
+                $doesExist = count($doesExist['data']);
+
+                if ($doesExist) {
+                    $sql = "DELETE FROM has_supplier WHERE id_ingredient = ". $session['entityID'] ." AND id_supplier = ". $item;
+
+                    $result = $sqlQuery->execute($sql);
+
+                    $positive += $result['status'];
+                }
+            }
+
+            return $positive == count($list);
         }
     }
 

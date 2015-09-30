@@ -7,6 +7,10 @@ angular.module('dbClient')
         form : ''
     };
 
+    $scope.pick = {
+        c : null
+    };
+
     $scope.isForm = function(form) {
         return $scope.view.form == form;
     };
@@ -192,7 +196,13 @@ angular.module('dbClient')
         }
     };
     
-    $scope.selectItem = $scope.selectCocktail;
+    $scope.selectItem = function(id){
+        if (!$scope.pick.c) {
+            $scope.selectCocktail(id);
+        } else {
+            $scope.pick.c(id);
+        }
+    };
 
 }])
 
@@ -210,7 +220,13 @@ angular.module('dbClient')
 
     $scope.search.fetchResults();
 
-    $scope.selectItem = $scope.selectIngredient;
+    $scope.selectItem = function(id){
+        if (!$scope.pick.c) {
+            $scope.selectIngredient(id);
+        } else {
+            $scope.pick.c(id);
+        }
+    };
 
 })
 
@@ -250,7 +266,7 @@ angular.module('dbClient')
 
 })
 
-.controller('client.views.forms.cocktail_details', ['$scope', 'Server', function($scope, Server){
+.controller('client.views.forms.cocktail_details', function($scope, Server, Util){
     $scope.editmode = false;
 
     Server.onCocktail(function(cocktail){
@@ -266,7 +282,18 @@ angular.module('dbClient')
             $scope.selectCocktail($scope.cocktail.id);
         });
     };
-}])
+
+    $scope.addRelation = function(){
+        $scope.pick.c = function(id){
+            Server.loadIngredient(id, function(item){
+                $scope.cocktail.ingredientList.push(item);
+                $scope.openForm('cocktail-details');
+            });
+        };
+
+        $scope.openForm('stock-list');
+    };
+})
 
 .controller('client.views.forms.ingredient_details', function($scope, Server){
     Server.onIngredient(function(ingredient){
@@ -278,6 +305,23 @@ angular.module('dbClient')
     Server.onBarkeeper(function(barkeeper){
         $scope.barkeeper = barkeeper;
     });
+
+    $scope.addRelation = function(){
+        $scope.pick.c = function(id){
+            Server.loadCocktail(id, function(item){
+                $scope.barkeeper.relationList.push(item);
+                $scope.openForm('barkeeper-details');
+            });
+        };
+
+        $scope.openForm('browse-cocktails');
+    };
+
+    $scope.save = function(){
+        Server.saveEntity('Barkeeper', $scope.barkeeper, function(){
+            $scope.selectBarkeeper($scope.barkeeper.id);
+        });
+    };
 })
 
 .controller('client.views.forms.supplier_details', function($scope, Server){

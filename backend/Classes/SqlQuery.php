@@ -3,7 +3,7 @@
 namespace DbServer;
 
 use Mysqli;
-    
+
 class SqlQuery {
 
     private $connection;
@@ -25,8 +25,8 @@ class SqlQuery {
 
         $result = $this->connection->query($query);
 
-        if (isset($result) && property_exists($result, 'num_rows')) {
-            for ($row_no = $result->num_rows - 1; $row_no >= 0; $row_no--) {
+        if (is_object($result) && property_exists($result, 'num_rows')) {
+            for ($row_no = $result->num_rows, $i = 0; $i < $row_no; $i++) {
 
                 $result->data_seek($row_no);
                 $row = $result->fetch_assoc();

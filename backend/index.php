@@ -3,7 +3,6 @@
 namespace DbServer {
 
     require_once('Classes/ActionsMap.php');
-
     require_once('Classes/Address.php');
     require_once('Classes/Barkeeper.php');
     require_once('Classes/Cocktail.php');

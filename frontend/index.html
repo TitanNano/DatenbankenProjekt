@@ -291,6 +291,11 @@
                                     <td ng-click="selectIngredient(ingredient.id)">{{ingredient.name}}</td>
                                     <td ng-if="editmode" ng-click="ingredient.removed = true"><md-icon md-svg-icon="./node_modules/material-design-icons/content/svg/production/ic_remove_48px.svg"></md-icon></td>
                                 </tr>
+
+                                <tr ng-if="editmode" ng-click="addRelation()">
+                                    <td>Add ingredient</td>
+                                    <td><md-icon md-svg-icon="node_modules/material-design-icons/content/svg/production/ic_add_48px.svg"></md-icon></td>
+                                </tr>
                             </table>
                         </div>
                         <div flex class="cocktail-info">
@@ -304,6 +309,20 @@
                             <div>Price: {{cocktail.price}}€</div>
                             <div>Ranking: {{cocktail.ranking}}</div>
                         </div>
+                    </div>
+
+                    <div>
+                        <h2>Description</h2>
+                        <span ng-if="!editmode">{{cocktail.description}}</span>
+                        <md-input-container ng-if="editmode">
+                            <textarea ng-model="cocktail.description"></textarea>
+                        </md-input-container>
+
+                        <h2>Preparation</h2>
+                        <span ng-if="!editmode">{{cocktail.preparation}}</span>
+                        <md-input-container ng-if="editmode">
+                            <textarea ng-model="cocktail.preparation"></textarea>
+                        </md-input-container>
                     </div>
 
                     <div layout>
@@ -388,13 +407,20 @@
                                     <td ng-click="selectCocktail(relation.id)">{{relation.price}}€</td>
                                     <td ng-if="editmode"><md-icon md-svg-icon="./node_modules/material-design-icons/content/svg/production/ic_remove_48px.svg"></md-icon></td>
                                 </tr>
+
+                                <tr ng-if="editmode" ng-click="addRelation()">
+                                    <td>Add cocktail</td>
+                                    <td><md-icon md-svg-icon="node_modules/material-design-icons/content/svg/production/ic_add_48px.svg"></md-icon></td>
+                                </tr>
                             </table>
                         </div>
                     </div>
 
                     <div layout>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Edit this Barkeeper</md-button>
-                        <md-button ng-show="isView('owner') || isView('barkeeper')" class="md-raised md-primary">Remove this Barkeeper</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" ng-click="setEditMode(true)" class="md-raised md-primary">Edit this Barkeeper</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); selectIngredient(ingredient.id)" class="md-raised md-primary">Discard Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && editmode" ng-click="setEditMode(false); save()" class="md-raised md-primary">Save Changes</md-button>
+                        <md-button ng-show="(isView('owner') || isView('barkeeper')) && !editmode" class="md-raised md-primary">Remove this Barkeeper</md-button>
                     </div>
 
                     <md-button ng-click="openForm()" right>{{strings.views.forms.close}}</md-button>
